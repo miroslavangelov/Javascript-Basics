@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+<script>
+	/*Write a function that returns the index of the first element in array that is bigger than its neighbors, or -1, if there’s no such element.*/
+	
+	function biggerThanTwoNeighbours(arr, number) {
+		for (var i = 0, len=arr.length;i<len;i++) {
+				if (arr[i]>arr[i-1] && arr[i]>arr[i+1]) {
+					return console.log("The number " + arr[i] + " is bigger than its two neighbours.");
+				}
+			}
+		return console.log("There is not a number that is bigger than its two neighbours.");
+		}
+	
+	var arr = [3,1,2,2,1,4];
+	biggerThanTwoNeighbours(arr);
+	
+	
+</script>
+</body>
+</html>

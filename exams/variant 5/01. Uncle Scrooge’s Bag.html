@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<script>
+function calculateCoins(input) {
+	var coins = 0,
+		gold = 0,
+		silver = 0,
+		bronze = 0;
+	for (var i = 0, len = input.length; i < len; i++) {
+		var currentElement = input[i].split(" "),
+			item = currentElement[0].toLowerCase(),
+			value = currentElement[1],
+			valueToNumber = Number(value);
+			
+		if (item === "coin" && valueToNumber % 1 === 0 && valueToNumber > 0) {
+			coins += valueToNumber;
+		}
+	}
+	
+	gold = Math.floor(coins/100);
+	coins -= gold*100;
+	silver = Math.floor(coins/10);
+	coins -= silver*10;
+	bronze = coins;
+	
+	console.log("gold : " + gold);
+	console.log("silver : " + silver);
+	console.log("bronze : " + bronze);
+}
+//calculateCoins(['Coin 12222','coin 2', 'coin 5', 'coin 10', 'coin 20', 'coin 50', 'coin 100', 'coin 200', 'coin 500', 'cigars 1']);
+//console.log();
+//calculateCoins(['Coin one', 'coin two', 'coin five', 'coin ten', 'coin twenty', 'coin fifty', 'coin hundred', 'cigars 1']);
+//console.log();
+calculateCoins([
+
+])
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<script>
+function solve(input) {
+	var sizes=input[0].split(" "),
+		rows = parseInt(sizes[0]),
+		cols = parseInt(sizes[1]),
+		firstRow = 1,
+		field=[],
+		count=0,
+		field2=[];
+		for (var i=1;i<=cols;i++) {
+			field2.push(i);
+		}
+		field.push(field2);
+		for (var i = 1; i<rows; i++) {
+		firstRow *= 2;
+			count=firstRow;
+			var field1=[];
+			field.push(field1);
+			field1.push(firstRow);
+						for (var j=1;j<cols;j++) {
+						count++;
+						field1.push(count);
+		}
+		}
+		
+		//field of directions
+		var fieldOfStrings=[];
+		for (var i =1, len = input.length; i<len;i++) {
+			var element = input[i].toString(),
+				element1 = element.split(" ");
+			fieldOfStrings.push(element1);
+		}
+		
+		
+		var currentPosition = fieldOfStrings[0][0],
+			row = 0,
+			col = 0,
+			sumOfNumbers = 0,
+			currentPositionInNumbers = field[0][0];
+		
+		while (true) {
+
+			if (currentPosition==="dr") {
+				row += 1;
+				col += 1;
+			}
+			if (currentPosition==="dl") {
+				row += 1;
+				col -= 1;
+			}
+			if (currentPosition==="ul") {
+				row -= 1;
+				col -= 1;
+			}
+			if (currentPosition==="ur") {
+				row -= 1;
+				col += 1;
+			}
+			if (row >=rows || col >= cols || row<0 || col<0) {
+				return console.log("successed with " + (sumOfNumbers+1));
+			}
+			if (fieldOfStrings[row][col] === "X") {
+				return console.log("failed at (" + row + ", " + col+")");
+			}
+			currentPosition = fieldOfStrings[row][col];
+			currentPositionInNumbers = field[row][col];
+			sumOfNumbers += currentPositionInNumbers;
+			fieldOfStrings[row][col]="X";
+		}
+		
+	}
+var input = ['3 5',
+'dr dl dl ur ul',
+'dr dr ul ul ur',
+'dl dr ur dl ur'   
+];
+solve(input);
+</script>
+</body>
+</html>

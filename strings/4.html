@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	/*You are given a text. Write a function that changes the text in all regions:
+<upcase>text</upcase> to uppercase.
+<lowcase>text</lowcase> to lowercase
+<mixcase>text</mixcase> to mix casing(random)
+
+*/
+function changeText (text) {
+	function mixCase(partOfText) {
+		var replaced = "";
+		for (var i=0;i<partOfText.length;i++) {
+			var asd = Math.random();
+			if (asd > 0.5) {
+				replaced += partOfText.charAt(i).toLowerCase();
+			} else {
+				replaced += partOfText.charAt(i).toUpperCase();
+			}
+		}
+		return replaced;
+		
+	}
+	text = text.replace(/<mixcase>(.*?)<\/mixcase>/g, function (match, parameter) {
+			return mixCase(parameter);
+	});
+	text = text.replace(/<lowcase>(.*?)<\/lowcase>/g, function (match, parameter) {
+		return parameter.toLowerCase();
+	});
+	text = text.replace(/<upcase>(.*?)<\/upcase>/g, function (match, parameter) {
+		return parameter.toUpperCase();
+	});
+	return text;
+}
+
+var text = "We are <mixcase>living</mixcase> in an <lowcase>YELLOW</lowcase> submarine. We don't <upcase>have anything</upcase> else. Inside the submarine is very tight. So we are drinking all the day. We will move out of it in 5 days.";
+
+console.log(changeText(text));
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a script that finds the biggest of three integers using nested if statements.
+
+	var x = 31,
+		y = 32,
+		z = 29,
+		max;
+	if (x>y) {
+		if (x>z) {
+			max = x;
+			console.log("The biggest number is " + max + ".");
+		}
+		else if (z>x) {
+			max = z;
+			console.log("The biggest number is " + max + ".");
+		}
+	} else if (y>x) {
+		if (y>z) {
+			max = y;
+			console.log("The biggest number is " + max + ".");
+			}
+		else if (z>y) {
+			max = z;
+			console.log("The biggest number is " + max + ".");
+			}
+		} else {
+			max = z;
+			console.log("The biggest number is " + max + ".");
+		}
+		
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<script>
+	function Solve(input) {
+		var arrayLength = parseInt(input[0]),
+			maxSum = parseInt(input[1]);
+		
+		for (var i = 1; i < arrayLength; i++) {
+			var currentElement = parseInt(input[i]);
+			if (currentElement > maxSum) {
+				maxSum = currentElement;
+			}
+			for (var j = i+1; j <= arrayLength; j++) {
+				currentElement += parseInt(input[j]);
+				if (currentElement > maxSum) {
+					maxSum = currentElement;
+				}
+				
+			}
+		}
+		return maxSum;
+	}
+	
+	var input = [
+		/*'6',
+		'1',
+		'3',
+		'-5',
+		'8',
+		'7',
+		'-6'
+		'9',
+		'-9',
+		'-8',
+		'-8',
+		'-7',
+		'-6',
+		'-5',
+		'-1',
+		'-7',
+		'-6'*/
+		'10',
+		'1255569',
+		'-851435',
+		'1457629',
+		'858237',
+		'221970',
+		'-652780',
+		'1379095',
+		'-732864',
+		'-606100',
+		'1566514'
+	];
+	
+	console.log(Solve(input));
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>8.NumberToText</title>
+<link href="js-console.css" rel="stylesheet" />
+</head>
+<body>
+
+<div id="js-console">
+</div>
+<script src="js-console.js">
+</script>
+<script>
+function Solve(params) {
+	var count = 0;
+	for (var i = 1, len=params.length; i<len;i++) {
+		if (parseInt(params[i])<=parseInt(params[i+1])){
+		continue;
+		} else {
+		count++;
+		}
+}
+return count;
+}
+var input = ['10','1','2','5','14','-3','4','4','0','1'];
+Solve(input);
+</script>
+</body>
+</html>

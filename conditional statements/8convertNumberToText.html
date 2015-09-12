@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	/*
+	Write a script that converts a number in the range [0...999] to a text corresponding to its English pronunciation. Examples:
+	0  'Zero'
+	273  'Two hundred seventy three'
+	400  'Four hundred'
+	501  'Five hundred and one'
+	711  'Seven hundred and eleven'
+
+	*/
+	function convertToText(number) {
+		var ones = number%10,
+			tens = parseInt(number/10%10),
+			hundreds = parseInt(number/100%10),
+			result;
+		if (number<0 || number>999) {
+			return console.log("Please enter a number that is between 0 and 999.");
+		}
+		if (hundreds===0 && tens===0 && ones===0) {
+			return console.log("Zero");
+		}
+		switch (hundreds) {
+				case 1: result="One hundred";break;
+				case 2: result="Two hundred";break;
+				case 3: result="Three hundred";break;
+				case 4: result="Four hundred";break;
+				case 5: result="Five hundred";break;
+				case 6: result="Six hundred";break;
+				case 7: result="Seven hundred";break;
+				case 8: result="Eight hundred";break;
+				case 9: result="Nine hundred";break;
+				default: result="";break;
+			}
+		if ((tens>0 || ones>0)&&hundreds>0) {
+			result+=" and ";
+		}
+		switch (tens) {
+				case 2: result+="twenty ";break;
+				case 3: result+="thirty ";break;
+				case 4: result+="forty ";break;
+				case 5: result+="fifty ";break;
+				case 6: result+="sixty ";break;
+				case 7: result+="seventy ";break;
+				case 8: result+="eighty ";break;
+				case 9: result+="ninety ";break;
+				default: result+="";
+		}
+		if (tens===1) {
+			switch(ones) {
+				case 0: result+="ten";break;
+				case 1: result+="eleven";break;
+				case 2: result+="twelve";break;
+				case 3: result+="thirteen";break;
+				case 4: result+="fourteen";break;
+				case 5: result+="fifteen";break;
+				case 6: result+="sixteen";break;
+				case 7: result+="seventeen";break;
+				case 8: result+="eighteen";break;
+				case 9: result+="nineteen";break;
+			}
+			return console.log(result);
+		}
+		
+		switch(ones) {
+				case 1: result+="one";break;
+				case 2: result+="two";break;
+				case 3: result+="three";break;
+				case 4: result+="four";break;
+				case 5: result+="five";break;
+				case 6: result+="six";break;
+				case 7: result+="seven";break;
+				case 8: result+="eight";break;
+				case 9: result+="nine";break;
+		}
+		console.log(result);
+	}
+	var number = 115;
+	convertToText(number);
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function solve(input) {
+	var input = input.map(Number),
+		s = input[0],
+		c1=input[1],
+		c2=input[2],
+		c3=input[3],
+		maxC1 = parseInt(s/c1),
+		maxC2 = parseInt(s/c2),
+		maxC3 = parseInt(s/c3),
+		maxValue=0;
+
+	
+	for (var i = 0; i<=maxC1; i++) {
+		for (var j=0; j<=maxC2;j++) {
+			for (var k=0;k<=maxC3;k++) {
+				currentValue = i*c1 + j*c2 + k*c3;
+				if (currentValue>maxValue && currentValue<=s) {
+					maxValue=currentValue;
+					if (maxValue===s) {
+						return maxValue;
+					}
+				}
+
+			}
+
+		}
+
+	}
+	return maxValue;
+}
+
+var input = [
+"20",
+"11",
+"200",
+"300"
+];
+solve(input);
+</script>
+</body>
+</html>

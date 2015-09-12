@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+
+<html>
+<body>
+<script>
+	//Write a function that formats a string using placeholders:The function should work with up to 30 placeholders and all types
+	
+	function placeholder(text) {
+		for (var i = 0; i<30; i++){
+			var args = arguments[i+1],
+				regex = new RegExp("[{]" + i + "[}]", "gi");
+			text = text.replace(regex, args)
+		}
+		return text;
+	}
+	
+	var str = placeholder("Hello, {0}!", "Peter");
+	console.log(placeholder(str));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<script>
+function solve(input) {
+	var firstRow = parseInt(input[0]),
+		functions = [],
+		bool = [],
+		arrays = [],
+		tempArray = [];
+		//process all functions
+	for (var i = 1; i < firstRow + 1; i++) {
+
+		var splitInput = input[i].split(":"),
+			func = splitInput[0],
+			value = splitInput[1];
+		if (value.indexOf(",") !== -1) {
+			tempArray.push(func);
+			tempArray.push(value);
+			functions.push(tempArray);
+			arrays.push(tempArray);
+			tempArray = [];
+			continue;
+		}
+		if (value == "true" || value == "false") {
+			tempArray.push(func);
+			tempArray.push(value);
+			functions.push(tempArray);
+			bool.push(tempArray);
+			tempArray = [];
+			continue;
+		}
+		else {
+			functions.push(splitInput);
+		}
+		
+	}
+	console.log(arrays)
+	//replace all string, bool or array functions, define @section, replace @renderSection, clear @section of the input, check @if if has true or false value
+	var tempResult = "",
+		sectionArray = [],
+		sectionArray1 = [],
+		countSectionRows = 0,
+		checkSection = 0;
+	
+	for (var i = firstRow + 2, len = input.length; i < len; i++) {
+		var currentRow = input[i];
+		if (currentRow.indexOf("@@") !== -1) {
+			tempResult+=currentRow;
+			tempResult+="\n";
+			continue;
+		}
+		if (currentRow.indexOf("@section ") !== -1 && currentRow.indexOf("{") !== -1) {
+			
+			var splitSection = currentRow.split("@section"),
+				splitSection1 = splitSection[1].split("{"),
+				currentSectionName = splitSection1[0].trim();
+				sectionArray1.push(currentSectionName);
+				sectionArray.push(sectionArray1),
+				sectionResult = "";
+				
+			
+			for (var l = i+1, len4 = input.length; l < len4; l++) {
+			
+			
+				if (input[l].indexOf("}") !== -1) {
+					sectionArray1.push(sectionResult);
+					sectionArray1 = [];
+					break;
+				}
+				sectionResult+=input[l];
+				
+				if (input[l+1].indexOf("}") !== -1) {
+					sectionResult+="";
+					countSectionRows++;
+					
+				}
+				else {
+					sectionResult+="\n";
+					countSectionRows++;
+				}
+			}
+			
+					countSectionRows++;
+					i+=countSectionRows;
+					countSectionRows = 0;
+					checkSection++;
+			continue;
+		}
+		if (currentRow.indexOf("@renderSection(") !== -1 && checkSection !==0) {
+	
+			var splitRenderSection = currentRow.split("@renderSection"),
+				whiteSpacesRenderSection = splitRenderSection[0],
+				splitRenderSection1 = splitRenderSection[1].split('("'),
+				splitRenderSection2 = splitRenderSection1[1].split('")'),
+				currentRenderSectionFunction = splitRenderSection2[0];
+				
+			for (var h = 0, len5 = sectionArray.length; h < len5; h++) {
+				if (currentRenderSectionFunction == sectionArray[h][0]) {
+					
+					var splitRS = sectionArray[h][1].split("\n"),
+						currentRSElement = "",
+						tempRSResult = "";
+					
+					for (var u = 0, len6 = splitRS.length; u < len6; u++) {
+						currentRSElement = whiteSpacesRenderSection + splitRS[u];
+						tempRSResult += currentRSElement;
+						if (u+1 == len6) {
+							tempRSResult += "";
+						}
+						else {
+							tempRSResult += "\n";
+						}
+					}
+					
+					tempResult+=tempRSResult;
+					break;
+				}
+			}
+
+			tempResult+="\n";
+			continue;
+		}
+		if (currentRow.indexOf("@foreach ") !== -1 && currentRow.indexOf("{") !== -1) {
+			tempResult+=currentRow;
+			tempResult+="\n";
+			continue;
+		}
+		if (currentRow.indexOf("@if ") !== -1 && currentRow.indexOf("{") !== -1) {
+
+			var splitIf = currentRow.split("@if"),
+				splitIf1 = splitIf[1].split("("),
+				splitIf2 = splitIf1[1].split(")"),
+				currentIfFunction = splitIf2[0];
+				
+			for (var q = 0, len3 = bool.length; q < len3; q++) {
+				if (currentIfFunction == bool[q][0]) {
+					currentRow = currentRow.replace(currentIfFunction, bool[q][1]);
+					break;
+				}
+			}
+			tempResult+=currentRow;
+			tempResult+="\n";
+			continue;
+		}
+		if (currentRow.indexOf("@") !== -1 && firstRow !== 0) {
+			var result = "",
+				currentFunction = "";
+			for (var s = 0, len1 = currentRow.length; s < len1; s++) {
+			
+				var currentSymbol = currentRow[s];
+				if (currentSymbol == "@") {
+					currentFunction += currentSymbol;
+					continue;
+				}
+				if (currentFunction !== "") {
+					if (currentSymbol == " " || currentSymbol == "<"
+					|| s+1 == len1) {
+						
+						for (var k = 0, len2 = functions.length; k < len2; k++) {
+							if (currentFunction == "@" + functions[k][0]) {
+								result+=functions[k][1];
+								result+=currentSymbol;
+								currentFunction = "";
+								break;
+							}
+							if (k+1 == len2) {
+								result+="$";
+								result+=currentSymbol;
+								currentFunction = "";
+							}
+						}
+					}
+					else {
+						currentFunction += currentSymbol;
+					}
+					continue;
+				}
+				result+=currentSymbol;
+				
+				
+			}
+			
+			tempResult+=result;
+			tempResult+="\n";
+			continue;
+		}
+		tempResult+=currentRow;
+		tempResult+="\n";
+	}
+	
+	
+	//process @if and @foreach, replace all @@
+	var splitInput = tempResult.split("\n"),
+		finalResult = "";
+	splitInput.pop();
+	
+	for (var j = 0, len7 = splitInput.length; j<len7; j++) {
+	
+		var currentRow1 = splitInput[j];
+		
+		if (currentRow1.indexOf("@if ") !== -1 && currentRow1.indexOf("{") !== -1 
+			&& currentRow1.indexOf("@@") == -1) {
+		
+			if (currentRow1.indexOf("true") !== -1) {
+
+				var splitTrueIf = currentRow1.split("@if ("),
+					whiteSpacesIf = splitTrueIf[0],
+					resultIf = "",
+					resultIf1 = "";
+				
+				for (var t = j + 1, len9 = splitInput.length; t < len9; t++) {
+				
+					if (splitInput[t].indexOf("}") !== -1) {
+					
+						break;
+					}
+					
+					resultIf += splitInput[t].trim();
+					resultIf+= "\n";
+					
+				}
+				var splitTempIf = resultIf.split("\n"),
+					currentIf = "",
+					countRowsIf = 0;
+				
+				for (var h = 0, len10 = splitTempIf.length-1; h < len10; h++) {
+					currentIf = whiteSpacesIf + splitTempIf[h];
+					resultIf1 += currentIf;
+					resultIf1 += "\n";
+					countRowsIf++;
+				}
+				countRowsIf++;
+				j+=countRowsIf;
+				finalResult += resultIf1;
+			}
+			
+			if (currentRow1.indexOf("false") !== -1) {
+			
+				var countRowsIfFalse = 0;
+				for (var c = j+1, len8 = splitInput.length; c < len8; c++) {
+				
+					if (splitInput[c].indexOf("}") !== -1) {
+						countRowsIfFalse++;
+						break;
+					}
+					countRowsIfFalse++;
+				}
+				j+=countRowsIfFalse;
+				finalResult+="";
+			}
+		
+			
+			continue;
+		}
+		
+		if (currentRow1.indexOf("foreach ") !== -1 && currentRow1.indexOf("{") !== -1
+			&& currentRow1.indexOf("@@") == -1) {
+			var splitForeach = currentRow1.split("@foreach"),
+				whiteSpacesForeach = splitForeach[0],
+				splitForeach1 = splitForeach[1].split(")"),
+				splitForeach2 = splitForeach1[0].split("in "),
+				currentForeachFunction = splitForeach2[1],
+				resultForeach = "",
+				firstRowForeach = splitInput[j+1],
+				whiteSpacesForeachFirstRow = "",
+				countForeach = 0;
+			for (var b = 0, len13 = firstRowForeach.length; b < len13; b++) {
+				var currentElement = firstRowForeach[b];
+				if (currentElement !== " ") {
+					break;
+				}
+				whiteSpacesForeachFirstRow += currentElement;
+			}
+			for (var r = j + 1, len12 = splitInput.length; r < len12; r++) {
+				if (splitInput[r].indexOf("}") !== -1) {
+					countForeach++;
+					break;
+				}
+				resultForeach += splitInput[r];
+				resultForeach += "\n";
+				countForeach++;
+			}
+			
+			var splitResult = resultForeach.split("\n"),
+				trimmedResult = "";
+			for (var e = 0, len14 = splitResult.length - 1; e < len14; e++) {
+				var replWhiteSpaces = splitResult[e].replace(whiteSpacesForeachFirstRow, "");
+				trimmedResult += replWhiteSpaces;
+				trimmedResult += "\n";
+			}
+			var splitTrimmed = trimmedResult.split("\n"),
+				resultTrimmed = "",
+				currentTrimmed = "";
+			for (var o = 0, len17 = splitTrimmed.length - 1; o < len17; o++) {
+				var currentTrimmed = splitTrimmed[o];
+				currentTrimmed = whiteSpacesForeach + currentTrimmed;
+				currentTrimmed += "\n";
+				resultTrimmed += currentTrimmed;
+			}
+			for (var g = 0, len11 = arrays.length; g < len11; g++) {
+				if (currentForeachFunction == arrays[g][0]) {
+					var arrayElements = arrays[g][1].split(","),
+						splitTrimmedResult = resultTrimmed.split("\n"),
+						tempResultForeach = "",
+						finalResultForeach = "";
+					for (var p = 0, len15 = arrayElements.length; p < len15; p++) {
+						var currentArrayElement = arrayElements[p];
+						for (var f = 0, len16 = splitTrimmedResult.length-1; f < len16; f++) {
+							var currentRowForeach = splitTrimmedResult[f];
+							if (currentRowForeach.indexOf("$") !== -1) {
+								var repl  = currentRowForeach.replace("$", currentArrayElement);
+								tempResultForeach += repl;
+								tempResultForeach += "\n";
+								continue;
+							}
+							tempResultForeach += currentRowForeach;
+							tempResultForeach += "\n";
+							
+						}
+						finalResultForeach += tempResultForeach;
+						tempResultForeach = "";
+					}
+					
+				}
+			}
+			
+			j+=countForeach;
+			finalResult += finalResultForeach;
+			continue;
+		}
+		
+		finalResult += currentRow1;
+		finalResult += "\n";
+	}
+	var splitFinalResult = finalResult.split("\n"),
+		lastResult = "";
+	for (var d = 0, len18 = splitFinalResult.length-1; d < len18; d++) {
+		var currentRow2 = splitFinalResult[d];
+		if (currentRow2.indexOf("@@") !== -1) {
+			currentRow2 = currentRow2.replace("@@", "@");
+		}
+		lastResult += currentRow2;
+		lastResult += "\n";
+	}
+	return lastResult;
+}
+var input = [
+'15',
+'text:RandomText',
+'anotherText:RandomTextAgain',
+'passTheIf:true',
+'doNotPassTheIf:false',
+'passTheIf:true',
+'doNotPassTheIf:false',
+'pesho:na peshlqka modela',
+'gosho:i gosho e tuka brato',
+'someNumbers:1,2,3,4,5',
+'someTechs:asp.net,mvc,angular,node,c-sharp',
+'someNumbersHere:1,2,3,4,5',
+'someTechsHere:asp.net,mvc,angular,node,c-sharp',
+'kolio:nikolay',
+'minkov:donchoviq',
+'unused:just unused model',
+'106',
+'@section first {',
+'<ul>',
+'    <li>',
+'        In section UL',
+'    </li>',
+'    <li>',
+'        Still in section UL',
+'    </li>',
+'</ul>',
+'}',
+'@section second {',
+'<div>',
+'    Second section :)',
+'</div>',
+'}',
+'<div>',
+'    <p>',
+'    @@if (pesho) { ',
+'        @@escaped dude',
+'    }',
+'    </p>',
+'    <p>',
+'    @@renderSection("pesho")',
+'    </p>',
+'    <p>',
+'    @@foreach(var pesho in peshos) {',
+'        @@escaped in comment',
+'    }',
+'    </p>',
+'</div>',
+'<div>',
+'    @renderSection("first")',
+'    @renderSection("second")',
+'</div>',
+'<div>',
+'    <div>',
+'        @text ',
+'    </div>',
+'    <ul>',
+'        <li>',
+'             <span>@anotherText</span>',
+'        </li>',
+'    </ul>',
+'</div>',
+'<div>',
+'    <p>Some bulsh*t text</p>',
+'    <br />',
+'    @if (passTheIf) {',
+'        <span>Passed</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @if (doNotPassTheIf) {',
+'            <span>if this passes this is error</span>',
+'        }',
+'    <div>',
+'</div>',
+'<div>',
+'    <p>Some bulsh*t text + @pesho & @gosho</p>',
+'    <br />',
+'    @if (passTheIf) {',
+'        <span>Passed @pesho and @gosho</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @if (doNotPassTheIf) {',
+'            <span>if this passes this is error @pesho and @gosho</span>',
+'        }',
+'    <div>',
+'</div>',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var number in someNumbers) {',
+'        <span>@number da ima</span>',
+'        <span>only @number</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @foreach (var tech in someTechs) {',
+'            <span>@tech is cool</span>',
+'            <span>and @tech is mama</span>',
+'        }',
+'    <div>',
+'</div>',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var someNumber in someNumbersHere) {',
+'        <span>@someNumber da ima</span>',
+'        <span>only @someNumber</span>',
+'        <strong>@kolio</strong>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @foreach (var someTech in someTechsHere) {',
+'            <span>@someTech is cool</span>',
+'            <span>and @someTech is mama</span>',
+'            <strong>@minkov</strong>',
+'        }',
+'    <div>',
+'</div>'
+/*'2',
+'someNumbers:1,2,3,4,5',
+'someTechs:asp.net,mvc,angular,node,c-sharp',
+'14',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var number in someNumbers) {',
+'        <span>@number da ima</span>',
+'        <span>only @number</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @foreach (var tech in someTechs) {',
+'            <span>@tech is cool</span>',
+'            <span>and @tech is mama</span>',
+'        }',
+'    <div>',
+'</div>'
+/*'4',
+'someNumbersHere:1,2,3,4,5',
+'someTechsHere:asp.net,mvc,angular,node,c-sharp',
+'kolio:nikolay',
+'minkov:donchoviq',
+'14',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var someNumber in someNumbersHere) {',
+'        <span>@someNumber da ima</span>',
+'        <span>only @someNumber</span>',
+'        <strong>@kolio</strong>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @foreach (var someTech in someTechsHere) {',
+'            <span>@someTech is cool</span>',
+'            <span>and @someTech is mama</span>',
+'            <strong>@minkov</strong>',
+'        }',
+'    <div>',
+'</div>'*/
+/*'0',
+'42',
+'<!DOCTYPE html>',
+'<html>',
+'<head>',
+'    <title>Telerik Academy</title>',
+'</head>',
+'<body>',
+' @renderSection("menu")',
+'',
+'    <h1>@title</h1>',
+'    @if (showSubtitle) {',
+'        <h2>@subTitle</h2>',
+'        <div>@@JustNormalTextWithDoubleKliomba ;)</div>',
+'    }',
+'',
+'    <ul>',
+'        @foreach (var student in students) {',
+'            <li>',
+'                @student ',
+'            </li>',
+'            <li>Multiline @title</li>',
+'        }',
+'    </ul>',
+'    @if (showMarks) {',
+'        <div>',
+'            @marks ',
+'        </div>',
+'    }',
+'',
+'    @renderSection("footer")',
+'</body>',
+'</html>'*/
+/*'7',
+'title:Telerik Academy',
+'showSubtitle:true',
+'subTitle:Free training',
+'showMarks:false',
+'showMarks:false',
+'marks:3,4,5,6',
+'students:Pesho,Gosho,Ivan',
+'42',
+'@section menu {',
+'<ul id="menu">',
+'    <li>Home</li>',
+'    <li>About us</li>',
+'</ul>',
+'}',
+'@section footer {',
+'<footer>',
+'    Copyright Telerik Academy 2014',
+'</footer>',
+'}',
+'<!DOCTYPE html>',
+'<html>',
+'<head>',
+'    <title>Telerik Academy</title>',
+'</head>',
+'<body>',
+' @renderSection("menu")',
+'',
+'    <h1>@title</h1>',
+'    @if (showSubtitle) {',
+'        <h2>@subTitle</h2>',
+'        <div>@@JustNormalTextWithDoubleKliomba ;)</div>',
+'    }',
+'asd',
+'    <ul>',
+'        @foreach (var student in students) {',
+'            <li>',
+'                @student ',
+'            </li>',
+'            <li>Multiline @title</li>',
+'        }',
+'    </ul>',
+'    @if (showMarks) {',
+'        <div>',
+'            @marks ',
+'        </div>',
+'    }',
+//'    @if (showMarks) {',
+//'        <div>',
+//'            @marks ',
+//'        </div>',
+//'    }',
+'',
+'    @renderSection("footer")',
+'</body>',
+'</html>'*/
+/*'5',
+'pesho:gosho',
+'gosho:pesho',
+'if:gadno',
+'foreach:hackvane',
+'renderSection:ivaylo sucks ;D',
+'8',
+'<div>',
+'    @@if (pesho)',
+'    @if (pesho)',
+'    @foreach (var nqma in nikoi)',
+'    @pesho ',
+'    @gosho ',
+'    @renderSection ',
+'</div>'*/
+/*'4',
+'passTheIf:true',
+'doNotPassTheIf:false',
+'pesho:na peshlqka modela',
+'gosho:i gosho e tuka brato',
+'14',
+'<div>',
+'    <p>Some bulsh*t text + @pesho & @gosho</p>',
+'    <br />',
+'    @if (passTheIf) {',
+'        <span>Passed @pesho and @gosho</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @if (doNotPassTheIf) {',
+'            <span>if this passes this is error @pesho and @gosho</span>',
+'        }',
+'    <div>',
+'</div>'*/
+/*'4',
+'someNumbersHere:1,2,3,4,5',
+'someTechsHere:asp.net,mvc,angular,node,c-sharp',
+'kolio:nikolay',
+'minkov:donchoviq',
+'14',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var someNumber in someNumbersHere) {',
+'        <span>@someNumber da ima</span>',
+'        <span>only @someNumber</span>',
+'        <strong>@kolio</strong>',
+'    }',
+'    <br />',
+'    <div>',
+'       <span>More bulsh*t text</span>',
+'        @foreach (var someTech in someTechsHere) {',
+'            <span>@someTech is cool</span>',
+'            <span>and @someTech is mama</span>',
+'            <strong>@minkov</strong>',
+'        }',
+'    <div>',
+'</div>'*/
+/*'15',
+'text:RandomText',
+'anotherText:RandomTextAgain',
+'passTheIf:true',
+'doNotPassTheIf:false',
+'passTheIf:true',
+'doNotPassTheIf:false',
+'pesho:na peshlqka modela',
+'gosho:i gosho e tuka brato',
+'someNumbers:1,2,3,4,5',
+'someTechs:asp.net,mvc,angular,node,c-sharp',
+'someNumbersHere:1,2,3,4,5',
+'someTechsHere:asp.net,mvc,angular,node,c-sharp',
+'kolio:nikolay',
+'minkov:donchoviq',
+'unused:just unused model',
+'106',
+'@section first {',
+'<ul>',
+'    <li>',
+'        In section UL',
+'    </li>',
+'    <li>',
+'        Still in section UL',
+'    </li>',
+'</ul>',
+'}',
+'@section second {',
+'<div>',
+'    Second section :)',
+'</div>',
+'}',
+'<div>',
+'    <p>',
+'    @@if (pesho) { ',
+'        @@escaped dude',
+'    }',
+'    </p>',
+'    <p>',
+'    @@renderSection("pesho")',
+'    </p>',
+'    <p>',
+'    @@foreach(var pesho in peshos) {',
+'        @@escaped in comment',
+'    }',
+'    </p>',
+'</div>',
+'<div>',
+'    @renderSection("first")',
+'    @renderSection("second")',
+'</div>',
+'<div>',
+'    <div>',
+'        @text ',
+'    </div>',
+'    <ul>',
+'        <li>',
+'             <span>@anotherText</span>',
+'        </li>',
+'    </ul>',
+'</div>',
+'<div>',
+'    <p>Some bulsh*t text</p>',
+'    <br />',
+'    @if (passTheIf) {',
+'        <span>Passed</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @if (doNotPassTheIf) {',
+'            <span>if this passes this is error</span>',
+'        }',
+'    <div>',
+'</div>',
+'<div>',
+'    <p>Some bulsh*t text + @pesho & @gosho</p>',
+'    <br />',
+'    @if (passTheIf) {',
+'        <span>Passed @pesho and @gosho</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @if (doNotPassTheIf) {',
+'            <span>if this passes this is error @pesho and @gosho</span>',
+'        }',
+'    <div>',
+'</div>',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var number in someNumbers) {',
+'        <span>@number da ima</span>',
+'        <span>only @number</span>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @foreach (var tech in someTechs) {',
+'            <span>@tech is cool</span>',
+'            <span>and @tech is mama</span>',
+'        }',
+'    <div>',
+'</div>',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    @foreach (var someNumber in someNumbersHere) {',
+'        <span>@someNumber da ima</span>',
+'        <span>only @someNumber</span>',
+'        <strong>@kolio</strong>',
+'    }',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        @foreach (var someTech in someTechsHere) {',
+'            <span>@someTech is cool</span>',
+'            <span>and @someTech is mama</span>',
+'            <strong>@minkov</strong>',
+'        }',
+'    <div>',
+'</div>'*/
+/*'0',
+'15',
+'<div>',
+'    <p>',
+'    @@if (pesho)',
+'        @@escaped dude',
+'    </p>',
+'    <p>',
+'    @@renderSection("pesho")',
+'    </p>',
+'    <p>',
+'    @@foreach(var pesho in peshos)',
+'        @@escaped in comment',
+'    </p>',
+'</div>'*/
+];
+console.log(solve(input));
+</script>
+</body>
+</html>

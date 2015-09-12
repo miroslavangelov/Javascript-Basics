@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<script>
+	function solve(input) {
+		var jumps = parseInt(input[0]),
+			trackLength = parseInt(input[1]),
+			fleesObject = {},
+			fleesArray = [],
+			winner = "",
+			i,j,currentFlee,currentName,firstLetter;
+		for (i = 2; i < input.length; i++) {
+			var splitFlee = input[i].split(", ");
+			var flee = splitFlee[0];
+			var jump = parseInt(splitFlee[1]);
+			fleesObject.name = flee;
+			fleesObject.jumpLength = jump;
+			fleesObject.jumpsSum = 0;
+			fleesArray.push(fleesObject);
+			fleesObject = {};
+		}
+		
+		for (i = 0; i < jumps; i++) {
+			for (j = 0; j < fleesArray.length; j++) {
+				currentFlee = fleesArray[j];
+				currentFlee.jumpsSum += currentFlee.jumpLength;
+				if (currentFlee.jumpsSum >= trackLength-1) {
+					winner = currentFlee.name;
+					break;
+				}
+				 
+			}
+			if (winner !== "") {
+				break;
+			}
+		}
+		var result = "";
+		for (i=0; i < 2; i++) {
+			for (j=0; j < trackLength; j++) {
+				result+="#";
+			}
+			result+="\n";
+		}
+		
+		for (i=0; i < fleesArray.length; i++) {
+			currentFlee = fleesArray[i];
+			currentName = currentFlee.name;
+			firstLetter = currentName[0].toUpperCase();
+			for (j=0; j < trackLength; j++) {
+				if (currentFlee.name === winner && j+1>=trackLength) {
+					result+=firstLetter;
+					break;
+				}
+				if (currentFlee.jumpsSum === j) {
+					result+=firstLetter;
+					continue;
+				}
+				result+=".";
+			}
+			result+="\n";
+		}
+		
+		for (i=0; i < 2; i++) {
+			for (j=0; j < trackLength; j++) {
+				result+="#";
+			}
+			result+="\n";
+		}
+		if (winner === "") {
+			fleesArray.sort(function(a, b){
+				return b.jumpsSum - a.jumpsSum;
+			});
+			for (i=0; i < fleesArray.length; i++) {
+				currentFlee = fleesArray[i];
+				if (i+1>=fleesArray.length) {
+					winner = currentFlee.name;
+					break;
+				}
+				if (currentFlee.jumpsSum > fleesArray[i+1].jumpsSum) {
+					winner = currentFlee.name;
+					break;
+				}
+			}
+		}
+		result+="Winner: " + winner;
+		return result;
+	}
+	
+	var input = [
+	/*'3','5','cura, 1','Pepi, 1','UlTraFlee, 1','BOIKO, 1'*/
+		'10',
+		'19',
+		'angel, 9',
+		'Boris, 10',
+		'Georgi, 3',
+		'Dimitar, 7'
+		/*'3',
+		'29',
+		'pesho, 9',
+		'gosho, 10',
+		'tosho, 7',
+		'gundi, 1'*/
+		/*'1',
+		'3',
+		'pesho, 1',
+		'gosho, 2'*/
+	/*	'1',
+		'1',
+		'pesho, 1',
+		'gosho, 1'*/
+		/*'3',
+		'10',
+		'Suzi, 5'*/
+	];
+	console.log(solve(input));
+</script>
+</body>
+</html>

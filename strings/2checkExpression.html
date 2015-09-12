@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	/*Write a JavaScript function to check if in a given expression the brackets are put correctly.
+Example of correct expression: ((a+b)/5-d).
+Example of incorrect expression: )(a+b)).
+*/
+
+function checkExpression(example) {
+	var splitExample = example.split("");
+	var count=0;
+	for (var i =0, len=splitExample.length;i<len;i++) {
+		if (count === -1) {
+			return console.log("The expression is incorrect.");
+		}
+		if (splitExample[i]==="(" && splitExample[i+1]===")") {
+			return console.log("The expression is incorrect");
+		}
+		if (splitExample[i]==="(") {
+			count++;
+		}
+		if (splitExample[i]===")") {
+			count--;
+		}
+	}
+	if (count===0) {
+	return console.log("The expression is correct");
+	} else {
+	return console.log("The expression is incorrect");
+	}
+}
+
+var example = "((a+b)))(";
+checkExpression(example);
+</script>
+</body>
+</html>

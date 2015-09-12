@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	var persons = [
+		{ firstname : 'Georgi', lastname: 'Petrov', age: 32 }, 
+		{ firstname : 'Andrei', lastname: 'Ivanov', age: 81},
+		{ firstname : 'Angel', lastname: 'Angelov', age: 5}
+		],
+		index = 0,
+		age = persons[0].age;
+	for (var i = 1; i< persons.length; i++) {
+		if (persons[i].age < age) {
+			age = persons[i].age;
+			index = i;
+		}
+	}
+	console.log(persons[index].firstname + " " + persons[index].lastname);
+</script>
+</body>
+</html>

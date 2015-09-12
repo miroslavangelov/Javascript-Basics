@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a script that compares two char arrays lexicographically (letter by letter).
+function checkLex () {
+	var arr1 = ["a","k","s"],
+		arr2 = ["a","k","s","m"];
+	for (var i = 0, len = arr1.length; i<len;i++) {
+		if (arr1[i]<arr2[i]) {
+			return console.log(arr1 + " is lexicographically first.");
+		}
+		else if (arr2[i]<arr1[i]) {
+			return console.log(arr2 + " is lexicographically first.");
+		}
+	}
+	if (arr1.length<arr2.length) {
+		console.log(arr1 + " is lexicographically first.");
+	} else if (arr2.length<arr1.length) {
+		console.log(arr2 + " is lexicographically first.");
+	} else {
+		console.log("The arrays are lexicographically equal.");
+	}
+}
+checkLex();
+</script>
+</body>
+</html>

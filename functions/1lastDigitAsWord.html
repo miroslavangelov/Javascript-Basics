@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a function that returns the last digit of given integer as an English word. Examples: 512  "two", 1024  "four", 12309  "nine"
+
+	function lastDigit(number) {
+		var digit = number%10;
+		switch(digit) {
+			case 0: digit="zero";break;
+			case 1: digit="one";break;
+			case 2: digit="two";break;
+			case 3: digit="three";break;
+			case 4: digit="four";break;
+			case 5: digit="five";break;
+			case 6: digit="six";break;
+			case 7: digit="seven";break;
+			case 8: digit="eight";break;
+			case 9: digit="nine";break;
+		}
+		console.log(digit);
+	}
+	var number = 18;
+	lastDigit(number);
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a script that enters the coefficients a, b and c of a quadratic equation
+		//a*x2 + b*x + c = 0
+		//and calculates and prints its real roots. Note that quadratic equations may have 0, 1 or 2 real roots.
+
+		var a = 2,
+			b = -4,
+			c = 2,
+			d = b*b - 4*a*c,
+			x1,x2;
+		if (a===0) {
+			console.log("This is not a quadratic equation.");
+		}		
+		if (d<0) {
+			console.log("The equation doesn't have real roots.");
+		}
+		
+		else if (d===0) {
+			x1 = (-b)/(2*a);
+			x2 = x1;
+			console.log("The equation has two equal roots: "+x1 +", " + x2 + ".");
+		}
+		else if (d>0) {
+			x1 = (-b + Math.sqrt(d))/2*a;
+			x2 = (-b - Math.sqrt(d))/2*a;
+			console.log("The equation has two roots: "+x1 +", " + x2 + ".");
+		}
+		
+		
+</script>
+</body>
+</html>

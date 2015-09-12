@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a script that finds the max and min number from a sequence of numbers
+	
+	function findMinMax() {
+	var arr = [21,43,154,11,67,88,66,167,203,4],
+		i,j,temp,temp2;
+		
+	for (i=0;i<arr.length-1;i++) {
+		temp=i;
+		for (j=i+1;j<arr.length;j++) {
+			if (arr[j]<arr[temp]) {
+			temp=j;
+			}
+		}
+		if (temp!=i) {
+			temp2=arr[temp];
+			arr[temp]=arr[i];
+			arr[i]=temp2;
+		}
+	}
+	console.log("The smallest number is " + arr[0]);
+	console.log("The biggest number is " + arr[arr.length-1]);
+}
+findMinMax();
+
+</script>
+</body>
+</html>

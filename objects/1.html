@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+
+<script>
+	/*Write functions for working with shapes in  standard Planar coordinate system
+Points are represented by coordinates P(X, Y)
+Lines are represented by two points, marking their beginning and ending
+L(P1(X1,Y1), P2(X2,Y2))
+Calculate the distance between two points
+Check if three segment lines can form a triangle
+*/
+
+
+	var PointA = new Point(1,1),
+		PointB = new Point(2,2),
+		PointC = new Point(3,3),
+		a = new Line(PointA, PointB),
+		b = new Line(PointB, PointC),
+		c = new Line(PointA, PointC);
+	
+	function Point(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+	function Line(start, end) {
+		this.start = start;
+		this.end = end;
+		this.length = calculateDistance(this.start, this.end);
+	}
+	function calculateDistance(start, end) {
+		return Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+	}
+	function checkIfTriangle(a,b,c) {
+		if (a.length + b.length > c.length
+		&& b.length + c.length > a.length
+		&& a.length + c.length > b.length) {
+			return "Can form triangle.";
+		}
+		else {
+			return "Can not form triangle.";
+		}
+	}
+
+	console.log(checkIfTriangle(a,b,c));
+	
+
+	
+</script>
+</body>
+</html>

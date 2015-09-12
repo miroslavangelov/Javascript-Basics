@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	/*Write a function that finds all the occurrences of word in a text
+	The search can case sensitive or case insensitive
+	Use function overloading*/
+	function findMatch (text, word) {
+		var matchText = text.match("\\b"+word+"\\b", "gi");
+		if (matchText===null) {
+			return console.log("The word is not found");
+		}
+		return console.log(matchText.length);
+	}
+	var text = "The rain in SPAIn stays mainly in the plain",
+		word="ins";
+	findMatch(text, word);
+</script>
+</body>
+</html>

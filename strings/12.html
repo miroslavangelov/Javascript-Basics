@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> </title>
+
+</head>
+<body>
+<div id="list-item">
+<strong>-{name}-</strong> <span>-{age}-</span>
+</div>
+<script>
+	function generateList(people,template){
+
+		var regex = new RegExp(/-{name}-/g),
+			regex1 = new RegExp(/-{age}-/g),
+			text = "";
+
+		for (var i = 0, len=people.length;i<len;i++){
+			var x,
+			replTempl = "<li>" + template.replace(regex, people[i].name),
+			replTemplate = replTempl.replace(regex1, people[i].age) + "</li>";
+			x = replTemplate;
+			text = text + x;
+		}
+		var templ = document.getElementById('list-item');
+		templ.innerHTML = "<ul>"+text+"</ul>";
+	}
+	var people = [{name: 'Peter', age: 14},
+				 {name: 'John', age: 18},
+				 {name: 'Jack', age: 28},
+				 {name: 'Jeremy', age: 20}
+	 ],
+	template = document.getElementById('list-item').innerHTML;
+	generateList(people,template);
+</script>
+</body>
+</html>

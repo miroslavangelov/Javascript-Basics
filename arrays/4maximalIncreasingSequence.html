@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a script that finds the maximal increasing sequence in an array. Example: {3, 2, 3, 4, 2, 2, 4}  {2, 3, 4}.
+
+	var arr=[8,1, 2, 3, 8,3, 4, 2, 2, 4],
+		count=1,
+		max=0,
+		position;
+	for (var i =0, len=arr.length;i<len;i++) {
+		if(arr[i]<=arr[i+1]) {
+			count++;
+			if (max<count) {
+				max=count;
+				position=i-max+2;
+			}
+		} else {
+			count=1;
+		}
+	}
+	var result = arr.slice(position, position+max);
+	console.log(result);
+</script>
+</body>
+</html>

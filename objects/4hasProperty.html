@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+	function checkProp(obj, property) {
+		for (property in obj) {
+			if (obj.hasOwnProperty(property)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	
+	
+	var obj = { name:"George", age:18, gender: {male:"yes", female:"no"}},
+		property = "address";
+	console.log(checkProp(obj, property));
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<script>
+	function Solve(input) {
+		var sizes = input[0].split(" "),
+			rows = parseInt(sizes[0]),
+			cols = parseInt(sizes[1]),
+			startPositionParams = input[1].split(" "),
+			row = parseInt(startPositionParams[0]),
+			col = parseInt(startPositionParams[1]),
+			fieldOfNumbers = [],
+			fieldOfDirections = [],
+			temp = [],
+			count = 0;
+		
+		for (var i = 0; i < rows; i++) {
+			fieldOfNumbers.push(temp);
+			for (var j = 0; j < cols; j++) {
+				count++;
+				temp.push(count);
+			}
+			temp = [];
+		}
+		
+		for (var k = 2, len = input.length; k < len; k++) {
+			var currentRow = input[k].split("");
+			fieldOfDirections.push(currentRow);
+		}
+		
+		var currentPosition,
+			sumOfNumbers = 0,
+			countCells = 0;
+			
+		while (true) {
+			if (row >= rows || row < 0 || col >= cols || col < 0) {
+				return "out " + sumOfNumbers;
+			}
+			if (fieldOfNumbers[row][col] === "X") {
+				return "lost " + countCells;
+			}
+			
+			sumOfNumbers += fieldOfNumbers[row][col];
+			currentPosition = fieldOfDirections[row][col];
+			
+			fieldOfNumbers[row][col] = "X";
+			countCells++;
+			if (currentPosition === "l") {
+				col-=1;
+				continue;
+			}
+			if (currentPosition === "r") {
+				col+=1;
+				continue;
+			}
+			if (currentPosition === "d") {
+				row+=1;
+				continue;
+			}
+			if (currentPosition === "u") {
+				row-=1;
+				continue;
+			}
+		
+		}
+		
+	}
+
+	var input = [
+		"5 8",
+		 "0 0",
+		 "rrrrrrrd",
+		 "rludulrd",
+		 "lurlddud",
+		 "urrrldud",
+		 "ulllllll"
+	/* "5 8",
+	 "0 0",
+	 "rrrrrrrd",
+	 "rludulrd",
+	 "durlddud",
+	 "urrrldud",
+	 "ulllllll"*/
+	];
+	console.log(Solve(input));
+</script>
+</body>
+</html>

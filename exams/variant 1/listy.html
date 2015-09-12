@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<script>
+function solve(input) {
+	var finalResult;
+	var functions = [];
+	for (var i = 0; i<input.length; i++) {
+		var currentRow = input[i].trim(),
+			parameters = [],
+			operator = "",
+			currentDigit = "",
+			currentFunctionName = "",
+			currentNewFunction = "";
+			
+		for (var j = 0; j< currentRow.length; j++) {
+			var currentSymbol = currentRow[j],
+				tempOperator = currentRow.substr(j,4);
+				
+			if (currentSymbol == " " || currentSymbol == ","
+			|| currentSymbol == "[" || currentSymbol == "]") {
+
+				if (currentSymbol == "]" && operator.length == 0) {
+					operator = "x";
+				}
+
+				if (currentFunctionName !== "") {
+
+					
+					if (functions[currentFunctionName] || functions[currentFunctionName]===0) {
+							var functionResult;
+
+							functionResult = functions[currentFunctionName];
+							if (functionResult instanceof Array) {
+								Array.prototype.push.apply(parameters, functionResult);
+							}
+							else {
+							parameters.push(functionResult);
+							}
+						
+					}
+					else {
+						currentNewFunction = currentFunctionName;
+					}
+					currentFunctionName = "";
+				}
+			
+				
+				if (currentDigit !== "") {
+				
+
+					parameters.push(parseInt(currentDigit));
+					currentDigit = "";
+				}
+				
+				if (currentNewFunction !== "" && currentSymbol == "]") {
+				
+						var result;
+						
+						if (operator == "x") {
+							result = parameters;
+							functions[currentNewFunction] = result;
+							
+						}
+						else {
+					
+						result = calculate(operator, parameters);
+						functions[currentNewFunction] = result;
+					}
+	
+					currentNewFunction = "";
+				}
+				continue;
+			}
+
+			
+			if (isNumber(currentSymbol)) {
+				if (currentFunctionName !== "") {
+					currentFunctionName += currentSymbol;
+				}
+				else {
+					currentDigit += currentSymbol;
+					}
+				continue;
+			}
+			
+			if (currentSymbol == "-" && j+1<currentRow.length
+				&& isNumber(currentRow[j+1])) {
+					currentDigit += currentSymbol;
+					continue;
+				}
+				
+			if (tempOperator == "max[" 
+			|| tempOperator == "min[" 
+			|| tempOperator == "sum[" 
+			|| tempOperator == "avg[") {
+				operator = tempOperator;
+				
+				j = j+3;
+				continue;
+			}
+			currentFunctionName += currentSymbol;
+		}
+	finalResult = calculate(operator,parameters);
+	}
+	
+	function isNumber(symbol) {
+		if (symbol == " ") {
+			return false;
+		}
+		return symbol == Number(symbol);
+	}
+	function calculate(operator, parameters) {
+		if (parameters.length == 1) {
+			return parameters[0];
+		}
+		var result = parameters[0];
+		switch (operator) {
+			case "max[": result = Math.max.apply(Math, parameters);break;
+			case "min[": result = Math.min.apply(Math, parameters);break;
+		}
+		for (var i = 1; i<parameters.length; i++) {
+			switch(operator) {
+				case "sum[": result += parameters[i]; break;
+				case "avg[": result += parameters[i]; break;
+			}
+			
+		}
+		if (operator=="avg[") {
+			result = Math.floor(result/(parameters.length));
+		}
+		return result;
+	}
+	return finalResult;
+}
+
+
+
+var input = [
+"def newFunc     [      123,432    , 4]",
+"def blaBLA sum[newFunc]",
+"def BLAbla min[newFunc]",
+"avg[BLAbla,blaBLA]"
+];
+console.log(solve(input));
+</script>
+</body>
+</html>

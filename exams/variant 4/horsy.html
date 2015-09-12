@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function solve(input) {
+	var sizes = input[0].split(" "),
+		rows = parseInt(sizes[0]),
+		cols = parseInt(sizes[1]),
+		field = [],
+		count = 2,
+		field1 = [];
+	for (var i=0; i<cols; i++) {
+		count--;
+		field1.push(count);
+	}
+	field.push(field1);
+	var firstRow = 1;
+	for (var i = 0; i< rows-1; i++) {
+
+		var field2=[];
+		field.push(field2);
+		firstRow *= 2;
+		count = firstRow + 1;
+		for (var j=0; j<cols; j++) {
+			count--;
+			field2.push(count);
+		}
+	}
+	
+	// field of directions
+	
+	var fieldOfDirections = [],
+		row = rows-1,
+		col = cols-1;
+	
+	for (var i =1;i<input.length;i++) {
+		var splitEl = input[i].split("");
+		fieldOfDirections.push(splitEl);
+	}
+
+	var currentPosition = fieldOfDirections[row][col],
+		sumOfNumbers = 0,
+		count = -1;
+	
+	while (true) {
+
+			if (row>=rows || col>=cols || row<0 || col<0) {
+			return console.log("Go go Horsy! Collected " + sumOfNumbers +  " weeds");
+		}
+		currentPosition = fieldOfDirections[row][col];
+		sumOfNumbers += field[row][col];
+		count++;
+		if (fieldOfDirections[row][col] === "X") {
+			return console.log("Sadly the horse is doomed in " + count + " jumps");
+		}
+		fieldOfDirections[row][col] = "X";
+		if (currentPosition==="1") {
+			row -= 2;
+			col += 1;
+			continue;
+		}
+		if (currentPosition==="2") {
+			row -= 1;
+			col += 2;
+			continue;
+		}
+		if (currentPosition==="3") {
+			row += 1;
+			col += 2;
+			continue;
+		}
+		if (currentPosition==="4") {
+			row += 2;
+			col += 1;
+			continue;
+		}
+		if (currentPosition==="5") {
+			row += 2;
+			col -= 1;
+			continue;
+		}
+		if (currentPosition==="6") {
+			row += 1;
+			col -= 2;
+			continue;
+		}
+		if (currentPosition==="7") {
+			row -= 1;
+			col -= 2;
+			continue;
+		}
+		if (currentPosition==="8") {
+			row -= 2;
+			col -= 1;
+			continue;
+		}
+	}
+}
+
+var input = [
+'3 5',
+'54361',
+'43326',
+'52188',
+];
+solve(input);
+</script>
+</body>
+</html>

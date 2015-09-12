@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	function group(persons, property) {
+		var result = [];
+		//for (var i in persons) {
+		for (var i = 0; i < persons.length; i++) {
+			var arrayElement = persons[i];
+			console.log(result);
+			if (arrayElement.hasOwnProperty(property)) {
+				var groupName = arrayElement[property],
+					groupObject = result[groupName];
+				if (groupObject) {
+					groupObject.push(arrayElement);
+					continue;
+				}
+				else {
+					result[groupName] = [];
+					result[groupName].push(arrayElement);
+					continue;
+				}
+				
+			}
+		}
+		
+		
+		return result;
+	}
+	var persons = [
+		{ firstname : 'Georgi', lastname: 'Petrov', age: 32 }, 
+		{ firstname : 'Andrei', lastname: 'Ivanov', age: 81},
+		{ firstname : 'Angel', lastname: 'Angelov', age: 5},
+		{ firstname : 'Ivan', lastname: 'Angelov', age: 15}
+		],
+		result = group(persons, "lastname");
+	console.log(result["Angelov"]);
+</script>
+</body>
+</html>

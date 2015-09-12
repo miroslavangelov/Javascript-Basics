@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<script>
+function solve(input) {
+	var wheels = parseInt(input[0]),
+	carWheels = 4,
+	trikeWheels = 3,
+	truckWheels = 10,
+	maxCar = parseInt(wheels/carWheels),
+	maxTrike = parseInt(wheels/trikeWheels),
+	maxTruck = parseInt(wheels/truckWheels),
+	count=0,
+	currentValue=0;
+	
+	for (var i=0;i<=maxTrike;i++) {
+		for (var j=0;j<=maxCar;j++) {
+			for (var k=0;k<=maxTruck;k++) {
+				currentValue= i*trikeWheels + j*carWheels + k*truckWheels;
+				if (currentValue===wheels) {
+					count++;
+				}
+			}
+		}
+	}
+	
+	return count;
+}
+var input = ["40"];
+solve(input);
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	/*Write a JavaScript function that finds how many times a substring is contained in a given text (perform case insensitive search)
+*/
+
+function findSubstring(text, substring) {
+	var regex = new RegExp(substring, "gi"),
+		findMatch = text.match(regex);
+	console.log(findMatch.length);
+}
+
+var text = "We are living in an yellow submarine. We don't have anything else. Inside the submarine is very tight. So we are drinking all the day. We will move out of it in 5 days.",
+	substring = "in";
+findSubstring(text, substring);
+</script>
+</body>
+</html>

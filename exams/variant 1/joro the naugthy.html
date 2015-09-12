@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+
+
+<script>
+	function Solve(input){
+		var sizes = input[0].split(" "),
+			rows = parseInt(sizes[0]),
+			cols = parseInt(sizes[1]),
+			field = [],
+			temp = [],
+			count = 0,
+			startPositionParams = input[1].split(" "),
+			row = parseInt(startPositionParams[0]),
+			col = parseInt(startPositionParams[1]);
+			
+		for (var i = 0; i < rows; i++) {
+			field.push(temp);
+			for (var j = 0; j < cols; j++) {
+				count++;
+				temp.push(count);
+			}
+			temp = [];
+		}
+		
+		var startPosition = field[row][col],
+			arrayOfJumps = [],
+			sumOfNumbers = startPosition,
+			numberOfJumps = 1,
+			currentPosition = startPosition;
+		field[row][col] = "X";
+
+		for (var k = 2, len = input.length; k < len; k++) {
+			var jumps = input[k].split(" "),
+				jumpsToNumber = jumps.map(returnNumber);
+			arrayOfJumps.push(jumpsToNumber);
+		}
+		
+
+		
+		for (var m = 0, len1 = arrayOfJumps.length; m <= len1; m++) {
+
+			if (m === arrayOfJumps.length) {
+				m = 0;
+			}
+
+			var currentJump = arrayOfJumps[m],
+				currentRow = currentJump[0],
+				currentCol = currentJump[1];
+			row+=currentRow;
+			col+=currentCol;
+			
+			if (row >= rows || row < 0 || col >= cols || col < 0) {
+				return "escaped " + sumOfNumbers;
+			}
+			
+			if (field[row][col] === "X") {
+				return "caught " + numberOfJumps;
+			}
+			
+			currentPosition = field[row][col];
+			sumOfNumbers += currentPosition;
+			field[row][col] = "X";
+			numberOfJumps++;
+		}
+		
+		function returnNumber(number) {
+			return parseInt(number, 10);
+		}
+	}
+	
+	var input = [
+	'6 7 3',
+	'0 0',
+	'2 2',
+	'-2 2',
+	'3 -1'
+	];
+	console.log(Solve(input));
+</script>
+</body>
+</html>

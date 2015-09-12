@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<script>
+	function solve(input) {
+		var regex = /(\s{2,100})/g;
+		var arr = [];
+		var i;
+		for (i = 0; i < input.length; i++) {
+			var currentElement = input[i].replace(regex, " ");
+			arr.push(currentElement);
+		}
+		var players = [];
+		
+		
+		for (i = 0; i < arr.length; i++) {
+			var splitPlayers = arr[i].split("vs.");
+			var splitSecondPlayer = splitPlayers[1].split(":");
+			var firstPlayer = splitPlayers[0].trim();
+			var secondPlayer = splitSecondPlayer[0].trim();
+			
+			players[firstPlayer] = {};
+			players[firstPlayer]["name"] = "";
+			players[firstPlayer]["matchesWon"] = 0;
+			players[firstPlayer]["matchesLost"] = 0;
+			players[firstPlayer]["setsWon"] = 0;
+			players[firstPlayer]["setsLost"] = 0;
+			players[firstPlayer]["gamesWon"] = 0;
+			players[firstPlayer]["gamesLost"] = 0;
+			
+			players[secondPlayer] = {};
+			players[secondPlayer]["name"] = "";
+			players[secondPlayer]["matchesWon"] = 0;
+			players[secondPlayer]["matchesLost"] = 0;
+			players[secondPlayer]["setsWon"] = 0;
+			players[secondPlayer]["setsLost"] = 0;
+			players[secondPlayer]["gamesWon"] = 0;
+			players[secondPlayer]["gamesLost"] = 0;
+		}
+		
+		
+		
+		for (i = 0; i < arr.length; i++) {
+			var splitPlayers = arr[i].split("vs.");
+			var splitSecondPlayer = splitPlayers[1].split(":");
+			var firstPlayer = splitPlayers[0].trim();
+			var secondPlayer = splitSecondPlayer[0].trim();
+			var result = splitSecondPlayer[1].trim();
+			var sets = result.split(" ");
+			var firstPlayerWonSets = 0;
+			var firstPlayerLostSets = 0;
+			var secondPlayerWonSets = 0;
+			var secondPlayerLostSets = 0;
+			var firstPlayerWonMatch = 0;
+			var firstPlayerLostMatch = 0;
+			var secondPlayerWonMatch = 0;
+			var secondPlayerLostMatch = 0;
+			var firstPlayerWonGames = 0;
+			var firstPlayerLostGames = 0;
+			var secondPlayerWonGames = 0;
+			var secondPlayerLostGames = 0;
+			for (var j = 0; j < sets.length; j++) {
+				var currentSet = sets[j];
+				firstPlayerWonGames += parseInt(currentSet[0]);
+				firstPlayerLostGames += parseInt(currentSet[2])
+				secondPlayerWonGames += parseInt(currentSet[2]);
+				secondPlayerLostGames += parseInt(currentSet[0])
+				if (currentSet[0] > currentSet[2]) {
+					firstPlayerWonSets++;
+					secondPlayerLostSets++;
+				}
+				else {
+					secondPlayerWonSets++;
+					firstPlayerLostSets++;
+				}
+			}
+			if (firstPlayerWonSets > secondPlayerWonSets) {
+				firstPlayerWonMatch += 1;
+				secondPlayerLostMatch += 1;
+		
+			}
+			else {
+				secondPlayerWonMatch += 1;
+				firstPlayerLostMatch += 1;
+			}
+			
+			if (players[firstPlayer]) {
+				players[firstPlayer]["name"] = firstPlayer;
+				players[firstPlayer]["matchesWon"] += firstPlayerWonMatch;
+				players[firstPlayer]["matchesLost"] += firstPlayerLostMatch;
+				players[firstPlayer]["setsWon"] += firstPlayerWonSets;
+				players[firstPlayer]["setsLost"] += firstPlayerLostSets;
+				players[firstPlayer]["gamesWon"] += firstPlayerWonGames;
+				players[firstPlayer]["gamesLost"] += firstPlayerLostGames;
+			}
+			if (players[secondPlayer]) {
+				players[secondPlayer]["name"] = secondPlayer;
+				players[secondPlayer]["matchesWon"] += secondPlayerWonMatch;
+				players[secondPlayer]["matchesLost"] += secondPlayerLostMatch;
+				players[secondPlayer]["setsWon"] += secondPlayerWonSets;
+				players[secondPlayer]["setsLost"] += secondPlayerLostSets;
+				players[secondPlayer]["gamesWon"] += secondPlayerWonGames;
+				players[secondPlayer]["gamesLost"] += secondPlayerLostGames;
+			}
+			
+		}
+		var sortedArr = [];
+		for (var player in players) {
+			var currentPlayer = players[player];
+			sortedArr.push(currentPlayer);
+		}
+		
+		sortedArr.sort(function(firstObj, secondObj) {
+			var sortByWonMatches = parseInt(secondObj["matchesWon"]) - parseInt(firstObj["matchesWon"]);
+			if (sortByWonMatches === 0) {
+				var sortByWonSets = parseInt(secondObj["setsWon"]) - parseInt(firstObj["setsWon"]);
+				if (sortByWonSets === 0) {
+					var sortByWonGames = parseInt(secondObj["gamesWon"]) - parseInt(firstObj["gamesWon"]);
+					if (sortByWonGames === 0) {
+						if (firstObj["name"] < secondObj["name"]) return -1;
+						if (firstObj["name"] > secondObj["name"]) return 1;
+						return 0;
+					}
+					else {
+						return sortByWonGames;
+					}
+				}
+				else {
+					return sortByWonSets;
+				}
+			}
+			else {
+				return sortByWonMatches;
+			}
+		})
+		console.log(JSON.stringify(sortedArr));
+		//console.log(sortedArr);
+	}
+	
+	var input = [
+				'Novak Djokovic vs. Roger Federer : 6-3 6-3',
+				'Roger    Federer    vs.        Novak Djokovic    :         6-2 6-3',
+				'Rafael Nadal vs. Andy Murray : 4-6 6-2 5-7',
+				'Andy Murray vs. David     Ferrer : 6-4 7-6',
+				'Tomas   Bedrych vs. Kei Nishikori : 4-6 6-4 6-3 4-6 5-7',
+				'Grigor Dimitrov vs. Milos Raonic : 6-3 4-6 7-6 6-2',
+				'Pete Sampras vs. Andre Agassi : 2-1',
+				'Boris Beckervs.Andre        Agassi:2-1'
+				];
+	console.log(solve(input));
+</script>
+</body>
+</html>

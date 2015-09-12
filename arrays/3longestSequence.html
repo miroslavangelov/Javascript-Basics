@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	/*Write a script that compares two char arrays lexicographically (letter by letter).
+	Write a script that finds the maximal sequence of equal elements in an array.
+	Example: {2, 1, 1, 2, 3, 3, 2, 2, 2, 1}  {2, 2, 2}. */
+	
+	var arr = [1,1, 1,1, 1, 2, 3, 3, 2, 2, 2, 1],
+		max=0,
+		count=1,
+		position;
+	for (var i=0, len = arr.length;i<len;i++) {
+		if (arr[i]===arr[i+1]) {
+			count++;
+			if (max<count) {
+				max = count;
+				position=i-max+2;
+			}
+		} else {
+			count=1;
+		}
+	}
+	var result = arr.slice(position, position+max);
+	console.log(result);
+</script>
+</body>
+</html>

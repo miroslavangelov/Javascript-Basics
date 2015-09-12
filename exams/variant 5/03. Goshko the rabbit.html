@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<script>
+	function solve(input) {
+		var directions = input[0].split(", ");
+		var matrix = [];
+		var i;
+		for (i=1; i < input.length; i++) {
+			var currentRow = input[i].split(", ");
+			matrix.push(currentRow);
+		}
+		
+		var row = 0,
+			col = 0,
+			carrots = 0,
+			cabbage = 0,
+			lettuce = 0,
+			turnip =0,
+			currentPosition = "",
+			rows = matrix.length,
+			cols = matrix[0].length,
+			walls = 0,
+			hittedWall,
+			cells = [],
+			countDirections = 0,
+			cellsResult = "";
+			
+		while (true) {
+			if (countDirections > directions.length) {
+				break;
+			}
+
+			var currentDirection = directions[countDirections];
+			hittedWall = false;
+			if (row < 0) {
+				row+=1;
+				walls++;
+				hittedWall = true;
+			}
+			if (row >= rows) {
+				row-=1;
+				walls++;
+				hittedWall = true;
+			}
+			if (col < 0) {
+				col += 1;
+				walls++;
+				hittedWall = true;
+			}
+			if (col >= cols) {
+				col-=1;
+				walls++;
+				hittedWall = true;
+			}
+					
+			currentPosition = matrix[row][col];
+
+			
+			
+			if (hittedWall === false && countDirections !== 0) {
+				if (currentPosition.indexOf("{!}") !== -1) {
+					carrots++;
+					matrix[row][col] = matrix[row][col].replace("{!}", "@");
+				}
+				if (currentPosition.indexOf("{*}") !== -1) {
+					cabbage++;
+					matrix[row][col] = matrix[row][col].replace("{*}", "@");
+				}
+				if (currentPosition.indexOf("{&}") !== -1) {
+					lettuce++;
+					matrix[row][col] = matrix[row][col].replace("{&}", "@");
+				}
+				if (currentPosition.indexOf("{#}") !== -1) {
+					turnip++;
+					matrix[row][col] = matrix[row][col].replace("{#}", "@");
+				}
+			}
+			if (countDirections !== 0 && hittedWall === false) {
+				cells.push(matrix[row][col]);
+			}
+			countDirections++;
+			if (currentDirection === "right") {
+				col+=1;
+				continue;
+			}
+			if (currentDirection === "left") {
+				col-=1;
+				continue;
+			}
+			if (currentDirection === "down") {
+				row+=1;
+				continue;
+			}
+			if (currentDirection === "up") {
+				row-=1;
+				continue;
+			}
+		}
+		if (cells.length === 0) {
+			cellsResult += "no";
+		}
+		if (cells.length === 1) {
+			cellsResult += cells[0];
+		}
+		if (cells.length > 1) {
+			for (i=0; i < cells.length; i++) {
+				cellsResult += cells[i];
+				if (i+1 >= cells.length) {
+					break;
+				}
+				else {
+					cellsResult += "|";
+				}
+			}
+		
+		}
+		console.log ('{' + '"&":' + lettuce + ',"*":' + cabbage + ',"#":' + turnip + ',"!":' + carrots + ',"wall hits":' + walls + '}');
+		console.log(cellsResult);
+	}
+	
+	var input = [
+		'right, up, up, down',
+		'asdf, as{#}aj{g}dasd, kjldk{}fdffd, jdflk{#}jdfj',
+		'tr{X}yrty, zxx{*}zxc, mncvnvcn, popipoip',
+		'poiopipo, nmf{X}d{X}ei, mzoijwq, omcxzne'
+	/*	'up, right, left, down',
+		'as{!}xnk'*/
+	];
+	console.log(solve(input));
+</script>
+</body>
+</html>

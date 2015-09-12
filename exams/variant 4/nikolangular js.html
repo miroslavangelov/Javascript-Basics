@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<script>
+function solve(input) {
+	var firstRow = parseInt(input[0]),
+		functions = [];
+	
+	for (var i = 1; i < firstRow+1; i++) {
+		var splitCurrentFunc = input[i].split("-"),
+			func = splitCurrentFunc[0],
+			value = splitCurrentFunc[1];
+		if (value === "true" || value === "false") {
+			functions[func] = value;
+			continue;
+		}
+		if (value.indexOf(";") !== -1) {
+			functions[func] = value;
+			continue;
+		}
+		else {
+			functions[func] = value;
+		}
+	}
+	var finalResult = "",
+		templateArray = [],
+		countTemplate = 0;
+	
+	for (var j = firstRow + 2, len = input.length; j < len; j++) {
+		var currentRow = input[j];
+		
+		if (currentRow.indexOf("{{") !== -1 && currentRow.indexOf("}}") !== -1) {
+			var replaceBrackets = currentRow.replace("{{", ""),
+				replaceBrackets1 = replaceBrackets.replace("}}", "");
+			finalResult += replaceBrackets1;
+			finalResult += "\n";
+			continue;
+		}
+		
+		if (currentRow.indexOf('<nk-template name=') !== -1) {
+			var splitCurrentTemplate = currentRow.split('<nk-template name="'),
+				splitCurrentTemplate1 = splitCurrentTemplate[1].split('">'),
+				currentTemplate = splitCurrentTemplate1[0],
+				templateResult = "",
+				getWhiteSpacesTemplate = input[j+1].split("<");
+			
+			for (var l = j+1; l < input.length; l++) {
+				if (input[l].indexOf("</nk-template>") !== -1) {
+					break;
+				}
+				templateResult += input[l].replace(getWhiteSpacesTemplate[0], "");
+				if (input[l+1].indexOf("</nk-template>") !== -1) {
+					templateResult += "";
+				}
+				else {
+					templateResult += "\n";
+				}
+				countTemplate++;
+				
+			}
+			templateArray[currentTemplate] = templateResult;
+			j += countTemplate + 1;
+			countTemplate = 0;
+			continue;
+		}
+		
+		if (currentRow.indexOf('<nk-template render="') !== -1) {
+			var splitCurrentRender = currentRow.split('<nk-template render="'),
+				splitCurrentRender1 = splitCurrentRender[1].split('" />'),
+				currentRender = splitCurrentRender1[0],
+				getWhiteSpacesRender = currentRow.split('<'),
+				elementLength = templateArray[currentRender].split("\n"),
+				renderResult = "";
+				for (var k = 0; k < elementLength.length; k++) {
+					var addedWhiteSpace = getWhiteSpacesRender[0] + elementLength[k];
+					addedWhiteSpace += "\n";
+					renderResult += addedWhiteSpace;
+				}
+				finalResult += renderResult;
+				continue;
+		}
+		
+		if (currentRow.indexOf('<nk-model>') !== -1 && currentRow.indexOf('</nk-model>') !== -1) {
+			var splitCurrentModel = currentRow.split("<nk-model>"),
+				splitCurrentModel1 = splitCurrentModel[1].split("</nk-model>"),
+				currentModel = splitCurrentModel1[0],
+				model = currentRow.replace("<nk-model>" + currentModel + "</nk-model>", functions[currentModel]);
+				if (model.indexOf('<nk-model>')!== -1 && model.indexOf('</nk-model>') !== -1) {
+					var splitModel = model.split("<nk-model>"),
+						splitModel1 = splitModel[1].split("</nk-model>"),
+						currentSecondModul = splitModel1[0];
+					model = model.replace("<nk-model>" + currentSecondModul + "</nk-model>", functions[currentSecondModul]);	
+				}
+			finalResult += model;
+			finalResult += "\n";
+			continue;
+		}
+		
+		if (currentRow.indexOf('<nk-if condition="') !== -1) {
+			var splitCurrentIf = currentRow.split('<nk-if condition="'),
+				splitCurrentIf1 = splitCurrentIf[1].split('">'),
+				currentIf = splitCurrentIf1[0],
+				getWhiteSpacesIf = currentRow.split("<");
+				if (functions[currentIf] === "true") {
+					var resultIf = "",
+						countIf = 0;
+					for (var m = j+1; m < input.length; m++) {
+						var currentRowIf = input[m].trim();
+						if (currentRowIf.indexOf('</nk-if>') !== -1) {
+							break;
+						}
+						if (currentRowIf.indexOf("{{") !== -1 && currentRowIf.indexOf("}}") !== -1) {
+							var replaceBracketsIf = currentRowIf.replace("{{", ""),
+								replaceBracketsIf1 = replaceBracketsIf.replace("}}", "");
+							resultIf += getWhiteSpacesIf[0] + replaceBracketsIf1;
+							resultIf += "\n";
+							countIf++;
+							continue;
+						}
+						if (currentRowIf.indexOf('<nk-model>') !== -1 && currentRowIf.indexOf('</nk-model>') !== -1) {
+							var splitCurrentModelIf = currentRowIf.split("<nk-model>"),
+							splitCurrentModelIf1 = splitCurrentModelIf[1].split("</nk-model>"),
+							currentModelIf = splitCurrentModelIf1[0],
+							modelIf = currentRowIf.replace("<nk-model>" + currentModelIf + "</nk-model>", functions[currentModelIf]);
+							
+							if (modelIf.indexOf('<nk-model>') !== -1 && modelIf.indexOf('</nk-model>') !== -1) {
+								var splitModelIf = modelIf.split("<nk-model>"),
+									splitModelIf1 = splitModelIf[1].split("</nk-model>"),
+									currentSecondModulIf = splitModelIf1[0];
+								modelIf = modelIf.replace("<nk-model>" + currentSecondModulIf + "</nk-model>", functions[currentSecondModulIf]);	
+							}
+							resultIf += getWhiteSpacesIf[0] + modelIf;
+							resultIf += "\n";
+							countIf++;
+							continue;
+						}
+						resultIf += getWhiteSpacesIf[0] + currentRowIf;
+						resultIf += "\n";
+						countIf++;
+					
+					}
+					finalResult += 	resultIf;
+					j += countIf + 1;
+					countIf = 0;
+					continue;
+				}
+				
+				if (functions[currentIf] === "false") {
+					var countIfFalse = 0;
+					for (var t = j+1; t < input.length; t++) {
+						if (input[t].indexOf('</nk-if>') !== -1) {
+							break;
+						}
+						countIfFalse++;
+					}
+					j += countIfFalse + 1;
+					countIfFalse = 0;
+					continue;
+				}
+		}
+		
+		if (currentRow.indexOf('nk-repeat for="') !== -1) {
+			var splitCurrentFor = currentRow.split('">'),
+				splitCurrentFor1 = splitCurrentFor[0].split(" in "),
+				currentFor = splitCurrentFor1[1],
+				getWhiteSpacesFor = currentRow.split("<"),
+				getWhiteSpacesFirstElement = input[j+1].split("<"),
+				tempResultFor = "",
+				countFor = 0,
+				currentForLength = functions[currentFor].split(";"),
+				splitVar = splitCurrentFor1[0].split('nk-repeat for="'),
+				getVar = splitVar[1];
+			for (var y = j+1; y < input.length; y++) {
+				var currentRowFor = input[y].replace(getWhiteSpacesFirstElement[0], "");
+				if (currentRowFor.indexOf("</nk-repeat>") !== -1) {
+					break;
+				}
+				if (currentRowFor.indexOf("{{") !== -1 && currentRowFor.indexOf("}}") !== -1) {
+					var replaceBracketsFor = currentRowFor.replace("{{", ""),
+						replaceBracketsFor1 = replaceBracketsFor.replace("}}", "");
+					tempResultFor += getWhiteSpacesFor[0] + replaceBracketsFor1;
+					tempResultFor += "\n";
+					countFor++;
+					continue;
+				}
+				if (currentRowFor.indexOf('<nk-model>') !== -1 && currentRowFor.indexOf('</nk-model>') !== -1) {
+					var splitCurrentModelFor = currentRowFor.split("<nk-model>"),
+						splitCurrentModelFor1 = splitCurrentModelFor[1].split("</nk-model>"),
+						currentModelFor = splitCurrentModelFor1[0],
+						modelFor = currentRowFor.replace("<nk-model>" + currentModelFor + "</nk-model>", functions[currentModelFor]);
+						
+					if (functions[currentModelFor] === undefined) {
+						tempResultFor += getWhiteSpacesFor[0] + currentRowFor;
+						tempResultFor += "\n";
+						countFor++;
+						continue;
+					}
+					else {
+						tempResultFor += getWhiteSpacesFor[0] + modelFor;
+						tempResultFor += "\n";
+						countFor++;
+						continue;
+					}
+				}
+				tempResultFor += getWhiteSpacesFor[0] + currentRowFor;
+				tempResultFor += "\n";
+				countFor++;
+			}
+			var tempArrayFor = tempResultFor.split("\n"),
+				resultFor = "";
+			tempArrayFor.pop();
+			for (var r = 0; r < currentForLength.length; r++) {
+				var currentArrayElementName = currentForLength[r];
+				for (var n = 0, len1 = tempArrayFor.length; n < len1; n++) {
+					var currentArrayElement = tempArrayFor[n];
+					
+					if (currentArrayElement.indexOf("<nk-model>") !== -1 && currentArrayElement.indexOf("</nk-model>") !== -1) {
+						var replaceForModel = currentArrayElement.replace("<nk-model>" + getVar + "</nk-model>", currentArrayElementName);
+						resultFor += replaceForModel;
+						resultFor += "\n";
+						continue;
+					}
+					resultFor += currentArrayElement;
+					resultFor += "\n";
+				}
+			}
+			j += countFor + 1;
+			finalResult += resultFor;
+			countFor = 0;
+			continue;
+		}
+		finalResult += currentRow;
+		finalResult += "\n";
+	}
+	return finalResult;
+}
+
+var input = [
+/*'0',
+'21',
+'<nk-template name="first">',
+'    <ul>',
+'        <li>',
+'            In section UL',
+'        </li>',
+'        <li>',
+'            Still in section UL',
+'        </li>',
+'    </ul>',
+'</nk-template>',
+'<nk-template name="second">',
+'    <div>',
+'        Second section :)',
+'    </div>',
+'</nk-template>',
+'<div>',
+'    <nk-template render="first" />',
+'    <nk-template render="second" />',
+'</div>'*/
+/*'6',
+'title-Telerik Academy',
+'showSubtitle-true',
+'subTitle-Free training',
+'showMarks-false',
+'marks-3;4;5;6',
+'students-Ivan;Gosho;Pesho',
+'42',
+'<nk-template name="menu">',
+'    <ul id="menu">',
+'        <li>Home</li>',
+'        <li>About us</li>',
+'    </ul>',
+'</nk-template>',
+'<nk-template name="footer">',
+'    <footer>',
+'        Copyright Telerik Academy 2014',
+'    </footer>',
+'</nk-template>',
+'<!DOCTYPE html>',
+'<html>',
+'<head>',
+'    <title>Telerik Academy</title>',
+'</head>',
+'<body>',
+'    <nk-template render="menu" />',
+'',
+'    <h1><nk-model>title</nk-model></h1>',
+'    <nk-if condition="showSubtitle">',
+'        <h2><nk-model>subTitle</nk-model></h2>',
+'        <div>{{<nk-model>subTitle</nk-model>}} ;)</div>',
+'    </nk-if>',
+'',
+'    <ul>',
+'        <nk-repeat for="student in students">',
+'            <li>',
+'                <nk-model>student</nk-model>',
+'            </li>',
+'            <li>Multiline <nk-model>title</nk-model></li>',
+'        </nk-repeat>',
+'    </ul>',
+'    <nk-if condition="showMarks">',
+'        <div>',
+'            <nk-model>marks</nk-model> ',
+'        </div>',
+'    </nk-if>',
+'',
+'    <nk-template render="footer" />',
+'</body>',
+'</html>'*/
+/*'0',
+'15',
+'<div>',
+'    <p>',
+'    {{<nk-if condition="pesho">}}',
+'        {{escaped}} dude',
+'    </p>',
+'    <p>',
+'    {{<nk-template render="pesho">}}',
+'    </p>',
+'    <p>',
+'    {{<nk-repeat for="pesho in peshos">}}',
+'        {{escaped}} in comment',
+'    </p>',
+'</div>'*/
+/*'2',
+'text-RandomText',
+'anotherText-RandomTextAgain',
+'10',
+'<div>',
+'    <div>',
+'        <nk-model>text</nk-model>',
+'    </div>',
+'    <ul>',
+'        <li>',
+'             <span><nk-model>anotherText</nk-model></span>',
+'        </li>',
+'    </ul>',
+'</div>'*/
+/*'2',
+'passTheIf-true',
+'doNotPassTheIf-false',
+'14',
+'<div>',
+'    <p>Some bulsh*t text</p>',
+'    <br />',
+'    <nk-if condition="passTheIf">',
+'        <span>Passed</span>',
+'    </nk-if>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-if condition="doNotPassTheIf">',
+'            <span>if this passes this is error</span>',
+'        </nk-if>',
+'    <div>',
+'</div>'*/
+/*'4',
+'passTheIf-true',
+'doNotPassTheIf-false',
+'pesho-na peshlqka modela',
+'gosho-i gosho e tuka brato',
+'14',
+'<div>',
+'    <p>Some bulsh*t text + <nk-model>pesho</nk-model> & <nk-model>gosho</nk-model></p>',
+'    <br />',
+'    <nk-if condition="passTheIf">',
+'        <span>Passed <nk-model>pesho</nk-model> and <nk-model>gosho</nk-model></span>',
+'    </nk-if>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-if condition="doNotPassTheIf">',
+'            <span>if this passes this is error <nk-model>pesho</nk-model> and <nk-model>gosho</nk-model></span>',
+'        </nk-if>',
+'    <div>',
+'</div>'*/
+/*'2',
+'someNumbers-1;2;3;4;5',
+'someTechs-asp.net;mvc;angular;node;c sharp',
+'14',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    <nk-repeat for="number in someNumbers">',
+'        <span><nk-model>number</nk-model> da ima</span>',
+'        <span>only <nk-model>number</nk-model></span>',
+'    </nk-repeat>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-repeat for="tech in someTechs">',
+'            <span><nk-model>tech</nk-model> is cool</span>',
+'            <span>and <nk-model>tech</nk-model> is mama</span>',
+'        </nk-repeat>',
+'    <div>',
+'</div>'*/
+/*'4',
+'someNumbersHere-1;2;3;4;5',
+'someTechsHere-asp.net;mvc;angular;node;c sharp',
+'kolio-nikolay',
+'minkov-donchoviq',
+'14',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    <nk-repeat for="someNumber in someNumbersHere">',
+'        <span><nk-model>someNumber</nk-model> da ima</span>',
+'        <span>only <nk-model>someNumber</nk-model></span>',
+'        <strong><nk-model>kolio</nk-model></strong>',
+'    </nk-repeat>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-repeat for="someTech in someTechsHere">',
+'            <span><nk-model>someTech</nk-model> is cool</span>',
+'            <span>and <nk-model>someTech</nk-model> is mama</span>',
+'            <strong><nk-model>minkov</nk-model></strong>',
+'        </nk-repeat>',
+'    <div>',
+'</div>'*/
+/*'15',
+'text-RandomText',
+'anotherText-RandomTextAgain',
+'passTheIf-true',
+'doNotPassTheIf-false',
+'passTheIf-true',
+'doNotPassTheIf-false',
+'pesho-na peshlqka modela',
+'gosho-i gosho e tuka brato',
+'someNumbers-1;2;3;4;5',
+'someTechs-asp.net;mvc;angular;node;c sharp',
+'someNumbersHere-1;2;3;4;5',
+'someTechsHere-asp.net;mvc;angular;node;c sharp',
+'kolio-nikolay',
+'minkov-donchoviq',
+'unused-just unused model',
+'106',
+'<nk-template name="first">',
+'    <ul>',
+'        <li>',
+'            In section UL',
+'        </li>',
+'        <li>',
+'            Still in section UL',
+'        </li>',
+'    </ul>',
+'</nk-template>',
+'<nk-template name="second">',
+'    <div>',
+'        Second section :)',
+'    </div>',
+'</nk-template>',
+'<div>',
+'    <p>',
+'    {{<nk-if condition="pesho">}}',
+'        {{escaped}} dude',
+'    </p>',
+'    <p>',
+'    {{<nk-template render="pesho">}}',
+'    </p>',
+'    <p>',
+'    {{<nk-repeat for="pesho in peshos">}}',
+'        {{escaped}} in comment',
+'    </p>',
+'</div>',
+'<div>',
+'    <nk-template render="first" />',
+'    <nk-template render="second" />',
+'</div>',
+'<div>',
+'    <div>',
+'        <nk-model>text</nk-model>',
+'    </div>',
+'    <ul>',
+'        <li>',
+'             <span><nk-model>anotherText</nk-model></span>',
+'        </li>',
+'    </ul>',
+'</div>',
+'<div>',
+'    <p>Some bulsh*t text</p>',
+'    <br />',
+'    <nk-if condition="passTheIf">',
+'        <span>Passed</span>',
+'    </nk-if>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-if condition="doNotPassTheIf">',
+'            <span>if this passes this is error</span>',
+'        </nk-if>',
+'    <div>',
+'</div>',
+'<div>',
+'    <p>Some bulsh*t text + <nk-model>pesho</nk-model> & <nk-model>gosho</nk-model></p>',
+'    <br />',
+'    <nk-if condition="passTheIf">',
+'        <span>Passed <nk-model>pesho</nk-model> and <nk-model>gosho</nk-model></span>',
+'    </nk-if>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-if condition="doNotPassTheIf">',
+'            <span>if this passes this is error <nk-model>pesho</nk-model> and <nk-model>gosho</nk-model></span>',
+'        </nk-if>',
+'    <div>',
+'</div>',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    <nk-repeat for="number in someNumbers">',
+'        <span><nk-model>number</nk-model> da ima</span>',
+'        <span>only <nk-model>number</nk-model></span>',
+'    </nk-repeat>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-repeat for="tech in someTechs">',
+'            <span><nk-model>tech</nk-model> is cool</span>',
+'            <span>and <nk-model>tech</nk-model> is mama</span>',
+'        </nk-repeat>',
+'    <div>',
+'</div>',
+'<div>',
+'    <span>Some bulsh*t text</span>',
+'    <br />',
+'    <nk-repeat for="someNumber in someNumbersHere">',
+'        <span><nk-model>someNumber</nk-model> da ima</span>',
+'        <span>only <nk-model>someNumber</nk-model></span>',
+'        <strong><nk-model>kolio</nk-model></strong>',
+'    </nk-repeat>',
+'    <br />',
+'    <div>',
+'        <span>More bulsh*t text</span>',
+'        <nk-repeat for="someTech in someTechsHere">',
+'            <span><nk-model>someTech</nk-model> is cool</span>',
+'            <span>and <nk-model>someTech</nk-model> is mama</span>',
+'            <strong><nk-model>minkov</nk-model></strong>',
+'        </nk-repeat>',
+'    <div>',
+'</div>'*/
+/*'5',
+'pesho-gosho',
+'gosho-pesho',
+'if-gadno',
+'repeat-hackvane',
+'template-ivaylo sucks :D',
+'8',
+'<div>',
+'    {{<nk-if condition="pesho">}}',
+'    <nk-model>if</nk-model> (pesho)',
+'    <nk-model>repeat</nk-model> (var nqma in nikoi)',
+'    <nk-model>pesho</nk-model>',
+'    <nk-model>gosho</nk-model>',
+'    <nk-model>template</nk-model>',
+'</div>'*/
+'5',
+'peshov-goshoviq',
+'goshov-peshoviq',
+'ifaylo-gadno a?',
+'repeatable-hackvane ima tuk',
+'templateable-ivaylo sucks more :D',
+'8',
+'<div>',
+'    {{<nk-if condition="peshov">}}',
+'    <nk-model>ifaylo</nk-model> (peshov)',
+'    <nk-model>repeatable</nk-model> (var nqma in nikoi)',
+'    <nk-model>peshov</nk-model>',
+'    <nk-model>goshov</nk-model>',
+'    <nk-model>templateable</nk-model>',
+'</div>'
+];
+solve(input);
+
+
+</script>
+</body>
+</html>

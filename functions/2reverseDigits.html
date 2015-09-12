@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a function that reverses the digits of given decimal number. Example: 256  652
+	
+	var number=123,
+		temp=0;
+	for (; number; number = Math.floor(number/10)) {
+		temp*=10;
+		temp+=number%10;
+	}
+	number=temp;
+	console.log(number);
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script>
+	//Write a script that finds the lexicographically smallest and largest property in document, window and navigator objects
+	
+	function compareLexicographically(obj) {
+			var min = "z",
+				max = "a";
+			for (var prop in obj) {
+				if (prop>max) {
+					max = prop;
+				}
+				if (prop<min) {
+					min = prop;
+				}
+			}
+			console.log("Min property: " + min);
+			console.log("Max property: " + max);
+}
+	compareLexicographically(document);
+	compareLexicographically(navigator);
+	compareLexicographically(window);
+
+</script>
+</body>
+</html>
